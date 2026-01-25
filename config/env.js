@@ -8,6 +8,8 @@ const validateEnvVariables = () => {
     "CLOUDINARY_API_SECRET",
     "CLOUDINARY_CLOUD_NAME",
     "GEMINI_API_KEY",
+    "RAZORPAY_KEY_ID",
+    "RAZORPAY_KEY_SECRET",
   ];
 
   const missingKeys = required.filter((key) => !process.env[key]);
