@@ -87,10 +87,44 @@ const HTTP_STATUS = {
 
 const JWT_EXPIRATION = "7d";
 
+const CREDIT_COSTS = {
+  CONTENT_GENERATION: 5, // 5 credits per content generation
+  IMAGE_GENERATION: 10, // 10 credits per image generation
+};
+
+const DEFAULT_CREDITS = 100;
+
+const CREDIT_PACKAGES = [
+  {
+    id: "starter",
+    name: "Starter Pack",
+    credits: 500,
+    price: 99, // in INR
+    popular: false,
+  },
+  {
+    id: "professional",
+    name: "Professional Pack",
+    credits: 1500,
+    price: 249, // in INR
+    popular: true,
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise Pack",
+    credits: 5000,
+    price: 699, // in INR
+    popular: false,
+  },
+];
+
 module.exports = {
   RESOLUTION_MAP,
   ACTIONS,
   CONTENT_ACTIONS,
   HTTP_STATUS,
   JWT_EXPIRATION,
+  CREDIT_COSTS,
+  DEFAULT_CREDITS,
+  CREDIT_PACKAGES,
 };

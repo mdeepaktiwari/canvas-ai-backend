@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 const Content = require("../models/content");
-const { ACTIONS, HTTP_STATUS } = require("../constant");
+const User = require("../models/auth");
+const { ACTIONS, HTTP_STATUS, CREDIT_COSTS } = require("../constant");
 const { generateContentWithGemini } = require("../services/generateContent");
 const {
   sendError,
@@ -27,6 +28,24 @@ exports.generateContent = asyncHandler(async (req, res) => {
     return sendError(res, HTTP_STATUS.BAD_REQUEST, "Invalid action");
   }
 
+  // Check and deduct credits
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return sendError(res, HTTP_STATUS.NOT_FOUND, "User not found");
+  }
+
+  if (user.credits < CREDIT_COSTS.CONTENT_GENERATION) {
+    return sendError(
+      res,
+      HTTP_STATUS.BAD_REQUEST,
+      `Insufficient credits. You need ${CREDIT_COSTS.CONTENT_GENERATION} credits to generate content.`,
+    );
+  }
+
+  // Deduct credits
+  user.credits -= CREDIT_COSTS.CONTENT_GENERATION;
+  await user.save();
+
   const prompt = ` 
       ${actionObj.prompt}
       Content: ${content}
@@ -43,6 +62,7 @@ exports.generateContent = asyncHandler(async (req, res) => {
 
   return sendSuccess(res, HTTP_STATUS.OK, actionObj.message, {
     content: updated_content,
+    creditsRemaining: user.credits,
   });
 });
 

@@ -52,6 +52,7 @@ exports.signIn = asyncHandler(async (req, res) => {
   return sendSuccess(res, HTTP_STATUS.OK, "Login successful", {
     token,
     name: user.name,
+    credits: user.credits,
   });
 });
 
@@ -89,6 +90,7 @@ exports.signUp = asyncHandler(async (req, res) => {
     id: newUser._id,
     name: newUser.name,
     email: newUser.email,
+    credits: newUser.credits,
     createdAt: newUser.createdAt,
   };
 

@@ -48,7 +48,6 @@ app.get("/", (req, res) => {
   });
 });
 
-
 // 404 handler - should be after all routes
 app.use((req, res) => {
   return sendError(res, HTTP_STATUS.NOT_FOUND, "Route not found");
