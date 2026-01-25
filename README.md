@@ -2,7 +2,7 @@
 
 Express API for a content and image generation CMS. Uses Gemini for content generation and Hugging Face for images.
 
-**Live API:** https://generator-cms-backend.onrender.com/
+**Live API:** https://canvas-ai-backend-1no2.onrender.com/
 
 ## Setup
 
