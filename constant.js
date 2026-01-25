@@ -118,6 +118,12 @@ const CREDIT_PACKAGES = [
   },
 ];
 
+const TRANSACTION_STATUS = {
+  PENDING: "pending",
+  COMPLETED: "completed",
+  FAILED: "failed",
+};
+
 module.exports = {
   RESOLUTION_MAP,
   ACTIONS,
@@ -127,4 +133,5 @@ module.exports = {
   CREDIT_COSTS,
   DEFAULT_CREDITS,
   CREDIT_PACKAGES,
+  TRANSACTION_STATUS,
 };

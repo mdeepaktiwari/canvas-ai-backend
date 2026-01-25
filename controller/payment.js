@@ -1,7 +1,11 @@
 const crypto = require("crypto");
 const User = require("../models/auth");
 const Transaction = require("../models/transaction");
-const { CREDIT_PACKAGES, HTTP_STATUS } = require("../constant");
+const {
+  CREDIT_PACKAGES,
+  HTTP_STATUS,
+  TRANSACTION_STATUS,
+} = require("../constant");
 const razorpayInstance = require("../config/razorpay");
 const {
   sendError,
@@ -65,7 +69,6 @@ exports.createOrder = asyncHandler(async (req, res) => {
   };
 
   try {
-        console.log(options)
     const order = await razorpayInstance.orders.create(options);
 
     await Transaction.create({
@@ -73,7 +76,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
       razorpay_order_id: order.id,
       amount: selectedPackage.price,
       credits: selectedPackage.credits,
-      status: "pending",
+      status: TRANSACTION_STATUS.PENDING,
     });
 
     return sendSuccess(res, HTTP_STATUS.CREATED, "Order created successfully", {
@@ -84,8 +87,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
       package: selectedPackage,
     });
   } catch (error) {
-    console.log(error)
-    logger.error(`Error creating Razorpay order: ${error.message}`);
+    logger.error(`Error creating Razorpay order: ${error.message}`, error);
     return sendError(
       res,
       HTTP_STATUS.INTERVAL_SERVER_ERROR,
@@ -116,7 +118,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
     return sendError(res, HTTP_STATUS.NOT_FOUND, "Transaction not found");
   }
 
-  if (transaction.status === "completed") {
+  if (transaction.status === TRANSACTION_STATUS.COMPLETED) {
     return sendError(res, HTTP_STATUS.BAD_REQUEST, "Payment already processed");
   }
 
@@ -127,7 +129,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
     .digest("hex");
 
   if (generatedSignature !== razorpay_signature) {
-    transaction.status = "failed";
+    transaction.status = TRANSACTION_STATUS.FAILED;
     await transaction.save();
 
     return sendError(res, HTTP_STATUS.BAD_REQUEST, "Invalid payment signature");
@@ -142,7 +144,7 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
   // Update transaction
   transaction.razorpay_payment_id = razorpay_payment_id;
   transaction.razorpay_signature = razorpay_signature;
-  transaction.status = "completed";
+  transaction.status = TRANSACTION_STATUS.COMPLETED;
   await transaction.save();
 
   // Add credits to user
