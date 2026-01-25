@@ -16,3 +16,5 @@ const validateEnvVariables = () => {
     throw new Error(`Missing environment variable: ${missingKeys.join(" , ")}`);
   }
 };
+
+module.exports = validateEnvVariables;
