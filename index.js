@@ -1,4 +1,5 @@
 const express = require("express");
+const http = require("http");
 const cors = require("cors");
 const router = require("./routes/v1");
 const app = express();
@@ -11,7 +12,11 @@ const errorHandler = require("./middleware/errorHandler");
 const globalLimiter = require("./middleware/rateLimiter");
 const { sendError } = require("./services/response");
 const { HTTP_STATUS } = require("./constant");
+const { Server } = require("socket.io");
 require("dotenv").config();
+
+// Create HTTP server and attach WebSocket
+const server = http.createServer(app);
 
 const PORT = process.env.PORT || 8000;
 
@@ -32,7 +37,7 @@ connectRedis().catch((error) => {
 configureCloudinary();
 
 app.use(cors());
-// parse json
+
 app.use(express.json());
 
 app.use(globalLimiter);
@@ -60,6 +65,36 @@ app.use((req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+let io;
+try {
+  io = new Server(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
+
+  io.on("connection", (socket) => {
+    logger.info(`WebSocket client connected: ${socket.id}`);
+
+    socket.emit("server_status", { status: "ready" });
+
+    socket.on("disconnect", (reason) => {
+      logger.info(`WebSocket client disconnected: ${socket.id} - ${reason}`);
+    });
+  });
+} catch (error) {
+  logger.error(
+    "Socket.io is not installed. Install it with `npm install socket.io` if you want WebSocket support.",
+  );
+}
+
+server.listen(PORT, () => {
   logger.info(`Server started on PORT ${PORT}`);
+
+  // Broadcast a server ready event (useful for clients already connected)
+  if (io) {
+    io.emit("server_status", { status: "ready" });
+  }
 });
