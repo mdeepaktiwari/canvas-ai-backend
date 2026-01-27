@@ -39,6 +39,10 @@ app.use(globalLimiter);
 
 app.use("/v1", router);
 
+app.get("/health", (_, res) => {
+  res.status(200).send("OK");
+});
+
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
