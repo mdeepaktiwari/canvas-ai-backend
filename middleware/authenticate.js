@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const logger = require("../services/logger");
 
 exports.authenticate = async (req, res, next) => {
   try {
@@ -14,6 +15,13 @@ exports.authenticate = async (req, res, next) => {
     req.user = decode;
     next();
   } catch (error) {
+    logger.error("JWT verification error:", error.message);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Token expired",
+        code: "TOKEN_EXPIRED",
+      });
+    }
     return res.status(401).json({
       message: "Error in authenticating user",
     });
