@@ -15,6 +15,7 @@
   "dependencies": {
     "@google/genai": "^1.34.0",
     "@huggingface/inference": "^4.13.5",
+    "@socket.io/redis-adapter": "^8.3.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
