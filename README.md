@@ -4,7 +4,7 @@ Express API for a content and image generation CMS. Uses Gemini for content gene
 
 **Live API:** https://canvas-ai-backend-1no2.onrender.com/
 
-**Backend Repo:** https://github.com/mdeepaktiwari/canvas-ai-frontend
+**Frontend Repo:** https://github.com/mdeepaktiwari/canvas-ai-frontend
 
 ## Setup
 
