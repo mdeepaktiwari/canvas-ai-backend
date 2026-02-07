@@ -1,8 +1,10 @@
-# CanvasAI - Backend
+# CanvasAI
 
 Express API for a content and image generation CMS. Uses Gemini for content generation and Hugging Face for images.
 
 **Live API:** https://canvas-ai-backend-1no2.onrender.com/
+
+**Backend Repo:** https://github.com/mdeepaktiwari/canvas-ai-frontend
 
 ## Setup
 
