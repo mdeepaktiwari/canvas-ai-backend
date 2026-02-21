@@ -46,23 +46,23 @@ exports.generateContent = asyncHandler(async (req, res) => {
   user.credits -= CREDIT_COSTS.CONTENT_GENERATION;
   await user.save();
 
-  const prompt = ` 
-      ${actionObj.prompt}
-      Content: ${content}
-    `;
+  const prompt = `
+    ${actionObj.prompt}
+    Content: ${content}
+  `;
 
-  const updated_content = await generateContentWithGemini(prompt);
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Transfer-Encoding", "chunked");
+  
+  let fullText = await generateContentWithGemini(prompt, res);
+  res.end();
 
+  // Save after streaming finishes
   await Content.create({
     user_id: req.user.id,
     input_prompt: content,
-    output_content: updated_content,
+    output_content: fullText,
     type: action,
-  });
-
-  return sendSuccess(res, HTTP_STATUS.OK, actionObj.message, {
-    content: updated_content,
-    creditsRemaining: user.credits,
   });
 });
 
